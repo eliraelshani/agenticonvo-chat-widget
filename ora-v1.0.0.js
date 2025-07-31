@@ -1,7 +1,23 @@
 (function () {
+    //const DEFAULT_CHAT_URL = "https://agenticonvo.com/ora"; // ✅ Use deployed URL in production
     const DEFAULT_CHAT_URL = "http://localhost:3000";
-    //const DEFAULT_CHAT_URL = "https://agenticonvo.com/ora";
-
+    const DEFAULT_ICON_URL = "https://eliraelshani.github.io/agenticonvo-chat-widget/chatlogo.png";
+  
+    function parseQueryParams(url) {
+      const params = {};
+      const queryString = url.split("?")[1];
+      if (!queryString) return params;
+      for (const pair of queryString.split("&")) {
+        const [key, value] = pair.split("=");
+        params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+      }
+      return params;
+    }
+  
+    function getScriptParams() {
+      const currentScript = document.currentScript || [...document.scripts].pop();
+      return parseQueryParams(currentScript.src || "");
+    }
   
     window.initOraChat = function (siteId, options = {}) {
       const lang = options.lang || "en";
@@ -30,10 +46,9 @@
         document.body.appendChild(iframe);
       };
   
-      // Create floating chat button
       const button = document.createElement("button");
       const icon = document.createElement("img");
-      icon.src = options.icon || "https://eliraelshani.github.io/agenticonvo-chat-widget/chatlogo.png";
+      icon.src = options.icon || DEFAULT_ICON_URL;
       icon.alt = "Chat Icon";
       icon.style = `
         width: 100%;
@@ -42,9 +57,9 @@
         display: block;
         border-radius: 50%;
       `;
-      
+  
       button.appendChild(icon);
-            button.title = "Chat with Ora";
+      button.title = "Chat with Ora";
       button.style = `
         position: fixed;
         bottom: 20px;
@@ -59,31 +74,36 @@
         z-index: 9999;
         cursor: pointer;
       `;
+  
       document.body.appendChild(button);
   
       button.addEventListener("click", () => {
         const iframe = document.getElementById(iframeId);
         if (iframe) {
-          iframe.style.display = "block"; // Restore minimized iframe
+          iframe.style.display = "block";
         } else {
-          createIframe(); // Create new one if exited
+          createIframe();
         }
       });
   
-      // Listen for postMessage events
       window.addEventListener("message", (event) => {
         if (!event.data || typeof event.data.type !== "string") return;
-  
         const chatFrame = document.getElementById(iframeId);
-  
         if (event.data.type === "ORA_MINIMIZE" && chatFrame) {
           chatFrame.style.display = "none";
         }
-  
         if (event.data.type === "ORA_CLOSE" && chatFrame) {
           chatFrame.remove();
         }
       });
     };
+  
+    // ✅ Auto-run on load if site_id is passed in script tag
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = getScriptParams();
+      if (params.site_id) {
+        window.initOraChat(params.site_id, { lang: params.lang || "en" });
+      }
+    });
   })();
   

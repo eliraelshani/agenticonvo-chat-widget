@@ -1,16 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <title>Ora Chat Embed Test</title>
-</head>
-<body>
-  <h1>Welcome to My Site</h1>
-  <p>This is a demo of embedding the Ora chatbot.</p>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Test Ora Popup Chat</title>
+    <style>
+      html, body {
+        font-family: sans-serif;
+        height: 100vh;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
 
-  <!-- Load the widget -->
-  <script src="./ora-v1.0.0.js"></script>
-  <script>
-    initOraChat("partner123", { lang: "en" });
-  </script>
-</body>
+      button {
+        font-size: 16px;
+        padding: 10px 20px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>This is a mock website</h1>
+
+    <!-- ✅ This is what you share with real websites -->
+    <button onclick="window.open('https://agenticonvo.com/ora/?popup=1', 'OraChat', 'width=430,height=560');">
+      💬 Chat with Ora
+    </button>
+  </body>
 </html>
+
